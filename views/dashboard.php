@@ -1,119 +1,114 @@
 <?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <div class="container-fluid">
-    <h2 class="mt-4">Bienvenido al Dashboard</h2>
+    <h2 class="mt-4">Soporte Tecnico TETSA</h2>
 
-    <!-- Verificamos el rol -->
-    <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']['tipo_usuario'] == 'Administrador'): ?>
+    <!-- Verificamos si el usuario está autenticado -->
+    <?php if (isset($_SESSION['usuario'])): ?>
 
-        <!-- Si es Administrador, mostramos los siguientes elementos -->
-        <div class="row">
-            <!-- Tarjeta: Crear nuevo ticket -->
-            <div class="col-md-3 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Crear Nuevo Ticket</h5>
-                        <p class="card-text">Registra un nuevo ticket de soporte.</p>
-                        <a href="index.php?action=createTicket" class="btn btn-primary">
-                            <i class="fas fa-plus-circle"></i> Crear Ticket
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <!-- Verificamos el rol -->
+        <?php if ($_SESSION['usuario']['tipo_usuario'] == 'Administrador'): ?>
 
-            <!-- Tarjeta: Tickets en progreso -->
-            <div class="col-md-3 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Tickets en Progreso</h5>
-                        <p class="card-text">Visualiza los tickets que están en proceso.</p>
-                        <a href="index.php?action=ticketsEnProgreso" class="btn btn-warning">
-                            <i class="fas fa-spinner"></i> Ver Tickets
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjeta: Tickets atendidos -->
-            <div class="col-md-3 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Tickets Atendidos</h5>
-                        <p class="card-text">Visualiza los tickets que han sido atendidos.</p>
-                        <a href="index.php?action=ticketsAtendidos" class="btn btn-success">
-                            <i class="fas fa-check-circle"></i> Ver Tickets
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjeta: Ver Técnicos -->
-            <div class="col-md-3 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Ver Técnicos</h5>
-                        <p class="card-text">Gestiona y asigna técnicos a tickets.</p>
-                        <a href="index.php?action=verTecnicos" class="btn btn-info">
-                            <i class="fas fa-users-cog"></i> Ver Técnicos
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <!-- Tarjetas principales para Administrador -->
+            <div class="row">
+                <!-- Tarjeta: Tickets -->
+<div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h5 class="card-title">Tickets</h5>
+            <p class="card-text">Accede a las opciones de gestión de tickets.</p>
+            <a href="index.php?action=gestionarTickets" class="btn btn-primary">
+                <i class="fas fa-ticket-alt"></i> Gestionar Tickets
+            </a>
         </div>
+    </div>
+</div>
 
-        <!-- Gráficas: Tickets en progreso y atendidos -->
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Gráfica de Tickets en Progreso</h5>
-                        <canvas id="graficaProgreso" style="max-height: 400px;"></canvas>
+
+                <!-- Tarjeta: SCRUM -->
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100 equal-size">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">SCRUM</h5>
+                            <p class="card-text">Visualiza el progreso de los tickets en SCRUM.</p>
+                            <a href="index.php?action=scrum" class="btn btn-info">
+                                <i class="fas fa-tasks"></i> Ver SCRUM
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta: Técnicos -->
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100 equal-size">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Técnicos</h5>
+                            <p class="card-text">Gestiona y asigna técnicos a tickets.</p>
+                            <a href="index.php?action=verTecnicos" class="btn btn-warning">
+                                <i class="fas fa-users-cog"></i> Ver Técnicos
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Gráfica de Tickets Atendidos</h5>
-                        <canvas id="graficaAtendidos" style="max-height: 400px;"></canvas>
+            <!-- Gráficos -->
+            <div class="row">
+                <!-- Gráfico de Pastel: Tickets Pendientes -->
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100 equal-size">
+                        <div class="card-body text-center d-flex flex-column">
+                            <h5 class="card-title">Tickets Pendientes</h5>
+                            <canvas id="graficaPendientes" class="flex-fill"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista SCRUM: Tickets en Progreso -->
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100 equal-size">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Tickets en Progreso (SCRUM)</h5>
+                            <div id="scrumBoard" class="flex-fill">
+                                <!-- Aquí se renderizará dinámicamente la vista SCRUM -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Barras: Tickets Atendidos por Técnicos -->
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100 equal-size">
+                        <div class="card-body text-center d-flex flex-column">
+                            <h5 class="card-title">Tickets Atendidos por Técnicos</h5>
+                            <canvas id="graficaTecnicos" class="flex-fill"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Gráfico de Tickets Atendidos por Técnicos -->
-        <div class="row">
-            <div class="col-md-12 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Gráfico de Tickets Atendidos por Técnicos</h5>
-                        <canvas id="graficaTecnicos" style="max-height: 400px;"></canvas>
+        <?php elseif ($_SESSION['usuario']['tipo_usuario'] == 'Técnico'): ?>
+
+            <!-- Vista para Técnico -->
+            <div class="row">
+                <!-- Tarjeta: Ver Tickets -->
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow-sm h-100 equal-size">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Ver Tickets</h5>
+                            <p class="card-text">Visualiza los tickets que tienes asignados.</p>
+                            <a href="index.php?action=listarTickets" class="btn btn-primary">
+                                <i class="fas fa-ticket-alt"></i> Ver Tickets
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-    <?php elseif (isset($_SESSION['usuario']) && $_SESSION['usuario']['tipo_usuario'] == 'Técnico'): ?>
-
-        <!-- Si es Técnico, mostramos una vista diferente -->
-        <div class="row">
-            <!-- Tarjeta: Ver Tickets -->
-            <div class="col-md-12 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Ver Tickets</h5>
-                        <p class="card-text">Visualiza los tickets que tienes asignados.</p>
-                        <a href="index.php?action=ticketsAsignados" class="btn btn-primary">
-                            <i class="fas fa-ticket-alt"></i> Ver Tickets
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php endif; ?>
 
     <?php else: ?>
-        <p>No tienes permisos para acceder a esta página.</p>
+        <p>No tienes permisos para acceder a esta página. Por favor, <a href="index.php?action=login">inicia sesión</a>.</p>
     <?php endif; ?>
 
 </div>
@@ -121,47 +116,69 @@
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>
 
 <script>
-// Gráfico de Tickets en Progreso
-var ctxProgreso = document.getElementById('graficaProgreso').getContext('2d');
-var graficaProgreso = new Chart(ctxProgreso, {
-    type: 'bar',
-    data: {
-        labels: ['Ticket 1', 'Ticket 2', 'Ticket 3'], // Aquí puedes usar datos dinámicos
-        datasets: [{
-            label: 'Tickets en Progreso',
-            data: [12, 19, 3], // Aquí puedes usar datos dinámicos
-            backgroundColor: 'rgba(255, 159, 64, 0.2)',
-            borderColor: 'rgba(255, 159, 64, 1)',
-            borderWidth: 1
-        }]
-    }
-});
-
-// Gráfico de Tickets Atendidos
-var ctxAtendidos = document.getElementById('graficaAtendidos').getContext('2d');
-var graficaAtendidos = new Chart(ctxAtendidos, {
+// Gráfico de Tickets Pendientes
+var ctxPendientes = document.getElementById('graficaPendientes').getContext('2d');
+var graficaPendientes = new Chart(ctxPendientes, {
     type: 'pie',
     data: {
-        labels: ['Ticket A', 'Ticket B', 'Ticket C'],
+        labels: ['Abiertos', 'En Espera', 'Reasignados'],
         datasets: [{
-            data: [10, 15, 5],
-            backgroundColor: ['#28a745', '#dc3545', '#ffc107'],
+            data: [30, 15, 10],
+            backgroundColor: ['#ffc107', '#17a2b8', '#6c757d'],
             hoverOffset: 4
         }]
     }
 });
 
-// Gráfico de Tickets Atendidos por Técnicos
+// Renderizado dinámico de la vista SCRUM
+var scrumData = [
+    { id: 1, titulo: "Configurar servidor", estado: "En progreso" },
+    { id: 2, titulo: "Actualizar sistema", estado: "Pendiente" },
+    { id: 3, titulo: "Testear funcionalidad", estado: "En progreso" }
+];
+var scrumBoard = document.getElementById('scrumBoard');
+scrumData.forEach(ticket => {
+    var ticketElement = document.createElement('div');
+    ticketElement.classList.add('scrum-item', 'mb-2', 'p-2', 'border', 'rounded');
+    ticketElement.innerHTML = `<strong>${ticket.titulo}</strong><br><small>${ticket.estado}</small>`;
+    scrumBoard.appendChild(ticketElement);
+});
+
+// Gráfico de Barras: Tickets Atendidos por Técnicos
 var ctxTecnicos = document.getElementById('graficaTecnicos').getContext('2d');
 var graficaTecnicos = new Chart(ctxTecnicos, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: ['Técnico 1', 'Técnico 2', 'Técnico 3'],
+        labels: ['Técnico A', 'Técnico B', 'Técnico C'],
         datasets: [{
-            data: [5, 10, 8], // Aquí puedes usar datos dinámicos
-            backgroundColor: ['#007bff', '#6c757d', '#17a2b8'],
-            hoverOffset: 4
+            label: 'Tickets Atendidos',
+            data: [12, 9, 15],
+            backgroundColor: ['#007bff', '#28a745', '#dc3545'],
+            borderColor: ['#0056b3', '#1e7e34', '#c82333'],
+            borderWidth: 1
         }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
     }
 });
 </script>
+
+<style>
+/* Aseguramos que las tarjetas y gráficos tengan el mismo tamaño */
+.equal-size {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+.equal-size canvas {
+    width: 100% !important;
+    height: 100% !important;
+    flex-grow: 1;
+}
+</style>

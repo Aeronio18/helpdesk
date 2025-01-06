@@ -3,14 +3,16 @@ require_once (__DIR__ . '/../models/model.php');
 
 class Ticket extends Model {
     // Crear un nuevo ticket
-    public function crearTicket($titulo, $descripcion, $prioridad, $usuario_id) {
-        $sql = "INSERT INTO tickets (titulo, descripcion, prioridad, usuario_id) 
-                VALUES (:titulo, :descripcion, :prioridad, :usuario_id)";
+    public function crearTicket($titulo, $descripcion, $prioridad, $usuario_id, $estado = 'Abierto', $tecnico_asignado = null) {
+        $sql = "INSERT INTO tickets (titulo, descripcion, estado, prioridad, usuario_id, tecnico_asignado) 
+                VALUES (:titulo, :descripcion, :estado, :prioridad, :usuario_id, :tecnico_asignado)";
         $params = [
             ':titulo' => $titulo,
             ':descripcion' => $descripcion,
+            ':estado' => $estado,
             ':prioridad' => $prioridad,
-            ':usuario_id' => $usuario_id
+            ':usuario_id' => $usuario_id,
+            ':tecnico_asignado' => $tecnico_asignado
         ];
         return $this->insert($sql, $params);
     }
@@ -46,4 +48,3 @@ class Ticket extends Model {
         return $this->execute($sql, $params);
     }
 }
-?>

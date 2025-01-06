@@ -9,23 +9,49 @@ class TicketController {
         $tickets = $ticketModel->obtenerTickets();
         require_once __DIR__ . '/../views/ticket.php';
     }
-
-    // Crear un nuevo ticket
-    public function crearTicket() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titulo = $_POST['titulo'];
-            $descripcion = $_POST['descripcion'];
-            $prioridad = $_POST['prioridad'];
-            $usuario_id = $_SESSION['usuario']['id']; // Usuario logueado
-
-            $ticketModel = new Ticket();
-            $ticketModel->crearTicket($titulo, $descripcion, $prioridad, $usuario_id);
-
-            header("Location: ticket.php");
+    public function gestionarTickets() {
+        // Verificamos si el usuario está autenticado
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: index.php?action=login");
+            exit();
         }
-        require_once __DIR__ . '/../views/create.php';
+    
+        // Cargamos la vista de gestión de tickets
+        require_once __DIR__ . '/../views/gestionarTickets.php';
     }
-
+    
+    public function crearTicket() {
+        if (isset($_SESSION['usuario'])) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                // Obtener los datos del formulario
+                $titulo = $_POST['titulo'];
+                $descripcion = $_POST['descripcion'];
+                $prioridad = $_POST['prioridad'];
+                $estado = $_POST['estado'];
+                $usuario_id = $_SESSION['usuario']['id'];  // Asignar el ticket al usuario logueado
+                $tecnico_asignado = $_POST['tecnico_asignado'] ?? null;  // Técnico asignado (opcional)
+    
+                // Crear el ticket en la base de datos
+                $ticketModel = new Ticket();
+                $ticketModel->crearTicket($titulo, $descripcion, $prioridad, $usuario_id, $estado, $tecnico_asignado);
+    
+                // Redirigir después de crear el ticket
+                header('Location: index.php?action=listarTickets');
+                exit();
+            }
+    
+            // Obtener la lista de técnicos para el formulario
+            $usuarioModel = new Usuario();
+            $tecnicos = $usuarioModel->obtenerTecnicos();  // Asumimos que el método `obtenerTecnicos` retorna los técnicos
+    
+            // Mostrar la vista de crear ticket
+            require_once __DIR__ . '/../views/create.php';
+        } else {
+            header('Location: index.php?action=mostrarLogin');
+            exit();
+        }
+    }
+    
     // Ver los detalles de un ticket
     public function verTicket($id) {
         $ticketModel = new Ticket();

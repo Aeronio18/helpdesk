@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . 'models/Usuario.php';
+require_once 'models/Usuario.php';
 
 class UsuarioController {
 
@@ -82,7 +82,11 @@ class UsuarioController {
             echo "No tienes permisos para ver los técnicos.";
         }
     }
-
+    public function obtenerTecnicos() {
+        $usuarioModel = new Usuario();
+        return $usuarioModel->obtenerTecnicos(); // Esto devolvería los técnicos de la base de datos
+    }
+    
     // Registrar un nuevo técnico
     public function registrarTecnico() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

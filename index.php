@@ -49,6 +49,9 @@ switch ($action) {
     case 'crearComentario':
         $comentarioController->crearComentario($_GET['id']);
         break;
+    case 'gestionarTickets':
+            $ticketController->gestionarTickets();
+            break;
     default:
         $usuarioController->mostrarLogin();
         break;
